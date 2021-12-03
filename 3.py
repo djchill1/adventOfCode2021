@@ -128,9 +128,6 @@ def list_reducer(input, most = True):
 
 
 def part2():
-	oxy_possibles = data
-
-
 	oxygen = list_reducer(data, True)
 	print('CO2 NOW *******************************************')
 	co2 = list_reducer(data, False)
