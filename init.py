@@ -1,5 +1,5 @@
-import sys
 import logging
+import sys
 
 
 def read_data(isTest=False, value='default'):
@@ -10,11 +10,14 @@ def read_data(isTest=False, value='default'):
     else:
         filename = current_day + "_input.txt"
     with open(filename) as f:
+        data = f.read()
         if value == 'default':
             return f.read().splitlines()
         elif value == 'int':
             return [int(x) for x in f]
         elif value == 'str':
             return [str(x) for x in f]
+        elif value == 'intlist':
+            return [int(x) for x in data.split(",")]
         else:
             logging.error("Unsupported value of " + value)
