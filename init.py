@@ -9,15 +9,17 @@ def read_data(isTest=False, value='default'):
         logging.warning("*** Using Test Data from " + filename)
     else:
         filename = current_day + "_input.txt"
+        logging.warning(" Using Data from " + filename)
     with open(filename) as f:
-        data = f.read()
         if value == 'default':
             return f.read().splitlines()
+            logging.info("using default parsing")
         elif value == 'int':
             return [int(x) for x in f]
         elif value == 'str':
             return [str(x) for x in f]
         elif value == 'intlist':
+            data = f.read()
             return [int(x) for x in data.split(",")]
         else:
             logging.error("Unsupported value of " + value)
