@@ -40,48 +40,6 @@ def is_lowest(i, j, heightmap):
     else:
         return False
 
-
-def floodfill(heightmap, i, j, size):
-    target = heightmap[i][j]
-    if target == 9:
-        return heightmap
-    size.append(target)
-    print('floodfilling', i, j)
-    if i > 0:
-        print('checking left', i - 1, j)
-        floodfill(heightmap, i - 1, j, size)
-    if i < heightmap.shape[0] - 1:
-        print('checking right', i + 1, j)
-        floodfill(heightmap, i + 1, j, size)
-    if j > 0:
-        floodfill(heightmap, i, j - 1, size)
-    if j < heightmap.shape[1] - 1:
-        floodfill(heightmap, i, j + 1, size)
-
-    # if i > 0:
-    #     # check left
-    #     if heightmap[i, j] - heightmap[i - 1, j] == 1:
-    #         # exactly one size up
-    #         size += 1
-    #         heightmap[i, j] = 99
-    # if j > 0:
-    #     # check above
-    #     if heightmap[i, j] - heightmap[i, j - 1] == 1:
-    #         # exactly one size up
-    #
-    # if i < heightmap.shape[0] - 1:
-    #     # check right
-    #     if heightmap[i, j] - heightmap[i + 1, j] == 1:
-    #         # exactly one size up
-    #
-    # if j < heightmap.shape[1] - 1:
-    #     # check below
-    #     if heightmap[i, j] - heightmap[i, j + 1] == 1:
-    #         # exactly one size up
-
-    return heightmap, size
-
-
 def part1():
     # initialise
     heightmap = np.array([np.array(list(i)) for i in data]).astype(int)
@@ -100,36 +58,36 @@ def part1():
 
 def part2():
     # initialise
-    heightmap = np.array([np.array(list(i)) for i in data]).astype(int)
+    # heightmap = np.array([np.array(list(i)) for i in data]).astype(int)
     # print(heightmap)
 
-    minimums = np.zeros((len(heightmap), len(heightmap[0]))).astype(int)
+    heightmap = [[0 if num != "9" else 9 for num in line.strip()] for line in data]
+    width = len(heightmap[0])
+    height = len(heightmap)
 
-    for i in range(heightmap.shape[0]):
-        for j in range(heightmap.shape[1]):
-            # print(i, j)
-            if is_lowest(i, j, heightmap):
-                minimums[i, j] = 1
+    def floodfill(matrix, x, y):
+        score = 0
+        if matrix[y][x] == 0:
+            matrix[y][x] = 1
+            score = 1
+            if x > 0:
+                score += floodfill(matrix, x - 1, y)
+            if x < len(matrix[0]) - 1:
+                score += floodfill(matrix, x + 1, y)
+            if y > 0:
+                score += floodfill(matrix, x, y - 1)
+            if y < len(matrix) - 1:
+                score += floodfill(matrix, x, y + 1)
+        return score
 
-    # flood fill up from minimums
-    sizes = []
-    size = []
-    print(heightmap)
-    print(minimums)
-    for j in range(heightmap.shape[0]):
-        for i in range(heightmap.shape[1]):
-            if minimums[j][i] == 1:
-                print('starting floodfill on', i, j)
-                # start the floodfill
-                heightmap, size = floodfill(heightmap, i, j, size)
-                # append size of fill to sizes
-                if size:
-                    sizes.append(size)
-                    size = []
+    scores = []
+    for idx in range(width):
+        for jdx in range(height):
+            scores.append(floodfill(heightmap, idx, jdx))
 
-    print(sizes)
+    scores = sorted(scores, reverse=True)[:3]
 
-    return False
+    return (scores[0] * scores[1] * scores[2])
 
 
 print(f'Part 1: {part1()}, Part 2: {part2()}')
