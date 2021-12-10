@@ -1,21 +1,36 @@
 import init
 
-data = init.read_data(True, )
+data = init.read_data(False, )
 
 
 def part1():
+	closing_braces = {')': '(', ']': '[', '}': '{', '>': '<'}
+	open_braces = {'(': 0, '[': 0, '{': 0, '<': 0}
+
+	score = {')': 3, ']': 57, '}': 1197, '>': 25137}
+	scores = []
+	illegals = []
+
 	for line in data:
-		closing_braces = {')': '(', ']': '[', '}': '{', '>': '<'}
-		open_braces = {'(': 0, '[': 0, '{': 0, '<': 0}
 		print(line)
+		chunks = []
 		for entry in line:
 			print(entry)
 			if entry in open_braces:
-				open_braces[entry] += 1
-			if entry in closing_braces:
-				open_braces[closing_braces[entry]] -= 1
-			print(open_braces)
-	return False
+				chunks.append(entry)
+			elif entry in closing_braces:
+				# what should the most recent chunk be:
+				should_be = closing_braces[entry]
+				recent_is = chunks.pop(-1)
+				if recent_is != should_be:
+					# corrupt
+					illegals.append(entry)
+					scores.append(score[entry])
+					print('found a corrupt!', entry, score[entry])
+					print('current scores', scores)
+					break
+
+	return sum(scores)
 
 
 def part2():
